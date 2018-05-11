@@ -12,12 +12,12 @@ class YandexZen
 	
 	public function getFeed($feed)
 	{
-		if ($this->http->Get(self::ZEN . '/media/' . $feed)) {
+		if ($this->http->Get(self::ZEN . '/' . $feed)) {
 			$html = $this->http->response;
-			$rawJson = html_entity_decode($this->_Pars('<textarea id="init_data" style="display: none" hidden>', $html, '</')); /*hardcode*/
+			$rawJson = html_entity_decode($this->_Pars('<script >window.__SERVER_STATE__ = ', $html, ';</script>')); /*hardcode*/
 			$json = json_decode($rawJson, true);
-			if (isset($json['publisher'])) {
-				return ['result' => true, 'publications' => $json['publications'], 'publisher' => $json['publisher']];
+			if (isset($json['feed'])) {
+				return ['result' => true, 'publications' => $json['feed']['items'], 'publisher' => $json['channelList'][$json['channel']['id']]['title']];
 			} else {
 				return ['result' => false, 'error' => 'Feed not found'];
 			}
